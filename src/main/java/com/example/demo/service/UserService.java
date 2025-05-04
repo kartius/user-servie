@@ -13,11 +13,9 @@ import java.util.Collection;
 public class UserService {
 
   private UserRepository userRepository;
-
   public void add(User user) {
     userRepository.add(user);
   }
-
   public void update(User user) {
     userRepository.update(user);
   }
