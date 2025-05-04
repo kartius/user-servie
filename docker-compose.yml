@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:latest
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: hillel
+    volumes:
+      - db_data:/var/lib/mysql/data
+    ports:
+      - "3306:3306"
+    networks:
+      - test-network
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  user-service:
+    build: .
+    container_name: user_service_container
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/hillel
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: password
+    ports:
+      - "8181:8181"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - test-network
+  order-service:
+    image: order_service:1
+    container_name: order_service_container
+    ports:
+      - "8282:8282"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - test-network
+networks:
+  test-network:
+    driver: bridge
+volumes:
+  db_data:
