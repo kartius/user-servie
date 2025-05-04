@@ -12,7 +12,7 @@ import java.util.Collection;
 @AllArgsConstructor
 public class UserService {
 
-  private UserRepository userRepository;
+  private UserRepository userRepository
   public void add(User user) {
     userRepository.add(user);
   }
